@@ -16,6 +16,7 @@
 
 class XInputDriver : public GPDriver {
 public:
+    XInputDriver(uint8_t playerNumber) : player(playerNumber) {}
     virtual void initialize();
     virtual void process(Gamepad * gamepad);
     virtual void initializeAux();
@@ -37,6 +38,7 @@ private:
     XInputAuth * xAuthDriver;
     uint8_t featureBuffer[XINPUT_OUT_SIZE];
     uint8_t tud_buffer[64];
+    uint8_t player;
 };
 
 #endif

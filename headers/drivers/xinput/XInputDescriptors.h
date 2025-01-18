@@ -46,14 +46,14 @@ typedef struct __attribute((packed, aligned(1)))
     uint8_t _reserved[6];
 } XInputReport;
 
-static const uint8_t xinput_string_language[]    = { 0x09, 0x04 };
-static const uint8_t xinput_string_serial[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-static const uint8_t xinput_string_manfacturer[] = "\xa9Microsoft Corporation";
-static const uint8_t xinput_string_product[]     = "Controller";
-static const uint8_t xinput_string_version[]     = "08FEC93"; // Fake a random serial, doesn't matter
-static const uint8_t xinput_string_xsm3[]        = "Xbox Security Method 3, Version 1.00, \xa9 2005 Microsoft Corporation. All rights reserved.";
+static uint8_t xinput_string_language[]    = { 0x09, 0x04 };
+static uint8_t xinput_string_serial[]      = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+static uint8_t xinput_string_manfacturer[] = "Arcade";
+static uint8_t xinput_string_product[]     = "Player X";
+static uint8_t xinput_string_version[]     = "X8FEC93"; // Fake a random serial, doesn't matter
+static uint8_t xinput_string_xsm3[]        = "Xbox Security Method 3, Version 1.00, \xa9 2005 Microsoft Corporation. All rights reserved.";
 
-static const uint8_t *xinput_string_descriptors[] __attribute__((unused)) =
+static uint8_t *xinput_string_descriptors[] __attribute__((unused)) =
 {
     xinput_string_serial,
     xinput_string_manfacturer,

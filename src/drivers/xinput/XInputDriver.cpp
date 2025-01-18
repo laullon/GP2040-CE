@@ -368,6 +368,9 @@ bool XInputDriver::vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_co
 }
 
 const uint16_t * XInputDriver::get_descriptor_string_cb(uint8_t index, uint16_t langid) {
+	xinput_string_product[7] = player;
+	xinput_string_version[0] = player;
+	xinput_string_serial[0] = player;
 	const char *value = (const char *)xinput_string_descriptors[index];
 	return getStringDescriptor(value, index); // getStringDescriptor returns a static array
 }
