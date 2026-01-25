@@ -1,23 +1,23 @@
 #include "drivermanager.h"
 
-#include "drivers/net/NetDriver.h"
 #include "drivers/astro/AstroDriver.h"
 #include "drivers/egret/EgretDriver.h"
 #include "drivers/hid/HIDDriver.h"
 #include "drivers/keyboard/KeyboardDriver.h"
 #include "drivers/mdmini/MDMiniDriver.h"
 #include "drivers/neogeo/NeoGeoDriver.h"
+#include "drivers/net/NetDriver.h"
+#include "drivers/p5general/P5GeneralDriver.h"
 #include "drivers/pcengine/PCEngineDriver.h"
-#include "drivers/psclassic/PSClassicDriver.h"
+#include "drivers/player/PlayerDriver.h"
 #include "drivers/ps3/PS3Driver.h"
 #include "drivers/ps4/PS4Driver.h"
+#include "drivers/psclassic/PSClassicDriver.h"
 #include "drivers/switch/SwitchDriver.h"
 #include "drivers/switchpro/SwitchProDriver.h"
 #include "drivers/xbone/XBOneDriver.h"
 #include "drivers/xboxog/XboxOriginalDriver.h"
 #include "drivers/xinput/XInputDriver.h"
-#include "drivers/p5general/P5GeneralDriver.h"
-
 #include "usbhostmanager.h"
 
 void DriverManager::setup(InputMode mode) {
@@ -35,7 +35,8 @@ void DriverManager::setup(InputMode mode) {
             driver = new KeyboardDriver();
             break;
         case INPUT_MODE_GENERIC:
-            driver = new HIDDriver();
+            // Use PlayerDriver (generic HID) so device can present as Player 1/2
+            driver = new PlayerDriver();
             break;
         case INPUT_MODE_MDMINI:
             driver = new MDMiniDriver();

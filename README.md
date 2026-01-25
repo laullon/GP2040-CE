@@ -73,31 +73,77 @@ If you would like to discuss features, issues or anything else related to GP2040
 ## Contributing
 
 Want to help improve GP2040-CE? There are a bunch of ways to contribute!
+# GP2040-CE (modified)
 
-### Community Participation
+Original project: https://github.com/OpenStickCommunity/GP2040-CE
 
-Have an idea for a cool new feature, or just want to discuss some technical details with the developers? Join the [OpenStick GP2040-CE Discord](https://discord.gg/k2pxhke7q8) server to participate in our active and ever-growing community!
+This fork contains a small, targeted set of changes made to support two
+identical joysticks ("Player 1" and "Player 2") from the same UF2 file.
 
-### Pull Requests
+Changes in this branch
 
-Pull requests are welcome and encouraged for enhancements, bug fixes and documentation updates.
+- Added `PlayerDriver` (generic HID) which presents the device as either
+  "Player 1" or "Player 2" depending on a boot-time selection.
+- Boot-time selection: hold B1 at power-on to choose Player 1, or hold B2
+  at power-on to choose Player 2. The selection is applied before driver
+  initialization so the same UF2 works for both units.
+- Added a single board config at `configs/Player/BoardConfig.h` for the
+  joystick mapping (4‑way D‑pad, 6 face buttons, Select/Start).
+- Device advertises different product strings and PIDs per player. Current
+  VID/PID used here: VID=0x1209 (pid.codes), PID=0x5BF0 (Player 1),
+  PID=0x5BF1 (Player 2). Change these in the driver if you require
+  vendor-specific IDs.
 
-Please respect the coding style of the file(s) you are working in, and enforce the use of the `.editorconfig` file when present.
+How to build the UF2
 
-## Acknowledgements
+From the repository root:
 
-- [FeralAI](https://github.com/FeralAI) for building [GP2040](https://github.com/FeralAI/GP2040) and laying the foundation for this community project
-- Ha Thach's excellent [TinyUSB library](https://github.com/hathach/tinyusb) examples
-- fluffymadness's [tinyusb-xinput](https://github.com/fluffymadness/tinyusb-xinput) sample
-- Kevin Boone's [blog post on using RP2040 flash memory as emulated EEPROM](https://kevinboone.me/picoflash.html)
-- [bitbank2](https://github.com/bitbank2) for the [OneBitDisplay](https://github.com/bitbank2/OneBitDisplay) and [BitBang_I2C](https://github.com/bitbank2/BitBang_I2C) libraries, which were ported for use with the Pico SDK
-- [arntsonl](https://github.com/arntsonl) for the amazing cleanup and feature additions that brought us to v0.5.0
-- [alirin222](https://github.com/alirin222) for the awesome turbo code ([@alirin222](https://twitter.com/alirin222) on Twitter)
-- [deeebug](https://github.com/deeebug) for improvements to the web-UI and fixing the PS3 home button issue
-- [TheTrain](https://github.com/TheTrainGoes/GP2040-Projects) and [Fortinbra](https://github.com/Fortinbra) for helping keep our community chugging along
-- [PassingLink](https://github.com/passinglink/passinglink) for the technical details and code for PS4 implementation
-- [Youssef Habchi](https://youssef-habchi.com/) for allowing us to purchase a license to use Road Rage font for the project
-- [tamanegitaro](https://github.com/tamanegitaro/) and [alirin222](https://github.com/alirin222) for the basis of the mini/classic controller work
-- [Ryzee119](https://github.com/Ryzee119) for the wonderful [ogx360_t4](https://github.com/Ryzee119/ogx360_t4/) and xid_driver library for Original Xbox support
-- [Santroller](https://github.com/Santroller/Santroller) and [GIMX](https://github.com/matlo/GIMX) for technical examples of Xbox One authentication using pass-through
-- [Santroller](https://github.com/Santroller/Santroller) for the code necessary to have Xbox 360 run without a dongle
+```bash
+# Recommended: skip the web build if you do not need the web UI assets or
+# if Node/npm causes issues on your host machine.
+SKIP_WEBBUILD=TRUE cmake -S . -B build
+cmake --build build -j 8
+
+# The UF2 file will be generated under:
+# build/GP2040-CE_<version>_Player.uf2
+```
+
+For a full build including web assets (requires Node.js and npm):
+
+```bash
+cmake -S . -B build
+cmake --build build -j 8
+```
+
+If the web build fails with an npm error (for example `ENOTEMPTY`), try:
+
+```bash
+rm -rf www/node_modules
+npm ci --prefix www
+cmake --build build -j 8
+```
+
+Flashing the UF2
+
+1. Enter bootloader mode on the RP2040 board (double-tap BOOTSEL or hold
+   BOOTSEL while plugging it in).
+2. Copy the UF2 file to the mounted `RPI-RP2` drive, or use `picotool`:
+
+```bash
+# Example copy on macOS / Linux:
+# cp build/GP2040-CE_*.uf2 /Volumes/RPI-RP2/
+# Or using picotool:
+# picotool load build/GP2040-CE_*.uf2
+```
+
+Notes
+
+- This fork intentionally uses the same UF2 for both physical units and
+  relies on a held button at boot to differentiate Player 1 vs Player 2.
+- If you want to change the advertised VID/PID or product strings, edit
+  `src/drivers/player/PlayerDriver.*`.
+
+Upstream
+
+For the original documentation, examples and additional board configs see:
+https://github.com/OpenStickCommunity/GP2040-CE

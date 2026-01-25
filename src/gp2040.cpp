@@ -419,54 +419,65 @@ GP2040::BootAction GP2040::getBootAction() {
 
 				if (gamepad->pressedS1() && gamepad->pressedS2() && gamepad->pressedUp()) {
 					return BootAction::ENTER_USB_MODE;
-				} else if (!webConfigLocked && gamepad->pressedS2()) {
-					return BootAction::ENTER_WEBCONFIG_MODE;
-                } else {
-                    if (!modeSwitchLocked) {
-                        if (auto search = bootActions.find(gamepad->state.buttons); search != bootActions.end()) {
-                            switch (search->second) {
-                                case INPUT_MODE_XINPUT:
-                                    return BootAction::SET_INPUT_MODE_XINPUT;
-                                case INPUT_MODE_SWITCH:
-                                    return BootAction::SET_INPUT_MODE_SWITCH;
-                                case INPUT_MODE_KEYBOARD:
-                                    return BootAction::SET_INPUT_MODE_KEYBOARD;
-                                case INPUT_MODE_GENERIC:
-                                    return BootAction::SET_INPUT_MODE_GENERIC;
-                                case INPUT_MODE_PS3:
-                                    return BootAction::SET_INPUT_MODE_PS3;
-                                case INPUT_MODE_PS4:
-                                    return BootAction::SET_INPUT_MODE_PS4;
-                                case INPUT_MODE_PS5:
-                                    return BootAction::SET_INPUT_MODE_PS5;
-                                case INPUT_MODE_P5GENERAL: 
-                                    return BootAction::SET_INPUT_MODE_P5GENERAL;
-                                case INPUT_MODE_NEOGEO:
-                                    return BootAction::SET_INPUT_MODE_NEOGEO;
-                                case INPUT_MODE_MDMINI:
-                                    return BootAction::SET_INPUT_MODE_MDMINI;
-                                case INPUT_MODE_PCEMINI:
-                                    return BootAction::SET_INPUT_MODE_PCEMINI;
-                                case INPUT_MODE_EGRET:
-                                    return BootAction::SET_INPUT_MODE_EGRET;
-                                case INPUT_MODE_ASTRO:
-                                    return BootAction::SET_INPUT_MODE_ASTRO;
-                                case INPUT_MODE_PSCLASSIC:
-                                    return BootAction::SET_INPUT_MODE_PSCLASSIC;
-                                case INPUT_MODE_XBOXORIGINAL:
-                                    return BootAction::SET_INPUT_MODE_XBOXORIGINAL;
-                                case INPUT_MODE_XBONE:
-                                    return BootAction::SET_INPUT_MODE_XBONE;
-                                case INPUT_MODE_SWITCH_PRO:
-                                    return BootAction::SET_INPUT_MODE_SWITCH_PRO;
-                                default:
-                                    return BootAction::NONE;
-                            }
-                        }
-                    }
-                }
+                                }
 
-				break;
+                                // Boot-time player selection: hold B1 for Player 1, B2 for Player 2
+                                // This sets the active mapping profile at boot so the same UF2 works
+                                // for both joysticks.
+                                if (gamepad->pressedB1() && !gamepad->pressedB2() && !gamepad->pressedS1() && !gamepad->pressedS2()) {
+                                    Storage::getInstance().setProfile(1);
+                                } else if (gamepad->pressedB2() && !gamepad->pressedB1() && !gamepad->pressedS1() && !gamepad->pressedS2()) {
+                                    Storage::getInstance().setProfile(2);
+                                }
+
+                                if (!webConfigLocked && gamepad->pressedS2()) {
+                                    return BootAction::ENTER_WEBCONFIG_MODE;
+                                } else {
+                                    if (!modeSwitchLocked) {
+                                        if (auto search = bootActions.find(gamepad->state.buttons); search != bootActions.end()) {
+                                            switch (search->second) {
+                                                case INPUT_MODE_XINPUT:
+                                                    return BootAction::SET_INPUT_MODE_XINPUT;
+                                                case INPUT_MODE_SWITCH:
+                                                    return BootAction::SET_INPUT_MODE_SWITCH;
+                                                case INPUT_MODE_KEYBOARD:
+                                                    return BootAction::SET_INPUT_MODE_KEYBOARD;
+                                                case INPUT_MODE_GENERIC:
+                                                    return BootAction::SET_INPUT_MODE_GENERIC;
+                                                case INPUT_MODE_PS3:
+                                                    return BootAction::SET_INPUT_MODE_PS3;
+                                                case INPUT_MODE_PS4:
+                                                    return BootAction::SET_INPUT_MODE_PS4;
+                                                case INPUT_MODE_PS5:
+                                                    return BootAction::SET_INPUT_MODE_PS5;
+                                                case INPUT_MODE_P5GENERAL:
+                                                    return BootAction::SET_INPUT_MODE_P5GENERAL;
+                                                case INPUT_MODE_NEOGEO:
+                                                    return BootAction::SET_INPUT_MODE_NEOGEO;
+                                                case INPUT_MODE_MDMINI:
+                                                    return BootAction::SET_INPUT_MODE_MDMINI;
+                                                case INPUT_MODE_PCEMINI:
+                                                    return BootAction::SET_INPUT_MODE_PCEMINI;
+                                                case INPUT_MODE_EGRET:
+                                                    return BootAction::SET_INPUT_MODE_EGRET;
+                                                case INPUT_MODE_ASTRO:
+                                                    return BootAction::SET_INPUT_MODE_ASTRO;
+                                                case INPUT_MODE_PSCLASSIC:
+                                                    return BootAction::SET_INPUT_MODE_PSCLASSIC;
+                                                case INPUT_MODE_XBOXORIGINAL:
+                                                    return BootAction::SET_INPUT_MODE_XBOXORIGINAL;
+                                                case INPUT_MODE_XBONE:
+                                                    return BootAction::SET_INPUT_MODE_XBONE;
+                                                case INPUT_MODE_SWITCH_PRO:
+                                                    return BootAction::SET_INPUT_MODE_SWITCH_PRO;
+                                                default:
+                                                    return BootAction::NONE;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                break;
 			}
 	}
 
