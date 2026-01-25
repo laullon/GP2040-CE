@@ -422,12 +422,26 @@ GP2040::BootAction GP2040::getBootAction() {
                                 }
 
                                 // Boot-time player selection: hold B1 for Player 1, B2 for Player 2
-                                // This sets the active mapping profile at boot so the same UF2 works
-                                // for both joysticks.
+                                // Set the active mapping profile and select GENERIC HID mode so the
+                                // firmware presents the Player HID identity (VID/PID/Product string).
                                 if (gamepad->pressedB1() && !gamepad->pressedB2() && !gamepad->pressedS1() && !gamepad->pressedS2()) {
-                                    Storage::getInstance().setProfile(1);
+                                    // Try normal profile switch; if it fails (profile missing/disabled),
+                                    // force the runtime profile number so we still present the Player identity.
+                                    if (Storage::getInstance().setProfile(1)) {
+                                        return BootAction::SET_INPUT_MODE_GENERIC;
+                                    } else {
+                                        Storage::getInstance().getGamepadOptions().profileNumber = 1;
+                                        Storage::getInstance().setFunctionalPinMappings();
+                                        return BootAction::SET_INPUT_MODE_GENERIC;
+                                    }
                                 } else if (gamepad->pressedB2() && !gamepad->pressedB1() && !gamepad->pressedS1() && !gamepad->pressedS2()) {
-                                    Storage::getInstance().setProfile(2);
+                                    if (Storage::getInstance().setProfile(2)) {
+                                        return BootAction::SET_INPUT_MODE_GENERIC;
+                                    } else {
+                                        Storage::getInstance().getGamepadOptions().profileNumber = 2;
+                                        Storage::getInstance().setFunctionalPinMappings();
+                                        return BootAction::SET_INPUT_MODE_GENERIC;
+                                    }
                                 }
 
                                 if (!webConfigLocked && gamepad->pressedS2()) {
