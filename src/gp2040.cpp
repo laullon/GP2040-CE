@@ -435,13 +435,15 @@ GP2040::BootAction GP2040::getBootAction() {
                                         return BootAction::SET_INPUT_MODE_GENERIC;
                                     }
                                 } else if (gamepad->pressedB2() && !gamepad->pressedB1() && !gamepad->pressedS1() && !gamepad->pressedS2()) {
-                                    if (Storage::getInstance().setProfile(2)) {
-                                        return BootAction::SET_INPUT_MODE_GENERIC;
-                                    } else {
-                                        Storage::getInstance().getGamepadOptions().profileNumber = 2;
-                                        Storage::getInstance().setFunctionalPinMappings();
-                                        return BootAction::SET_INPUT_MODE_GENERIC;
-                                    }
+									if (Storage::getInstance().setProfile(2)) {
+										sleep_ms(5000); // wait 5 seconds before continuing when selecting profile 2
+										return BootAction::SET_INPUT_MODE_GENERIC;
+									} else {
+										Storage::getInstance().getGamepadOptions().profileNumber = 2;
+										Storage::getInstance().setFunctionalPinMappings();
+										sleep_ms(5000); // wait 5 seconds before continuing when selecting profile 2
+										return BootAction::SET_INPUT_MODE_GENERIC;
+									}
                                 }
 
                                 if (!webConfigLocked && gamepad->pressedS2()) {
