@@ -25,19 +25,8 @@ void ButtonLayoutScreen::init() {
 
     setViewport((isInputHistoryEnabled ? 8 : 0), 0, (isInputHistoryEnabled ? 56 : getRenderer()->getDriver()->getMetrics()->height), getRenderer()->getDriver()->getMetrics()->width);
 
-	// load layout (drawElement pushes element to the display list)
-    uint16_t elementCtr = 0;
-    LayoutManager::LayoutList currLayoutLeft = LayoutManager::getInstance().getLayoutA();
-    LayoutManager::LayoutList currLayoutRight = LayoutManager::getInstance().getLayoutB();
-    for (elementCtr = 0; elementCtr < currLayoutLeft.size(); elementCtr++) {
-        pushElement(currLayoutLeft[elementCtr]);
-    }
-    for (elementCtr = 0; elementCtr < currLayoutRight.size(); elementCtr++) {
-        pushElement(currLayoutRight[elementCtr]);
-    }
-
-	// start with profile mode displayed
-	bannerDisplay = true;
+    // start with profile mode displayed
+    bannerDisplay = true;
     prevProfileNumber = -1;
 
     prevLayoutLeft = Storage::getInstance().getDisplayOptions().buttonLayout;
@@ -82,6 +71,26 @@ void ButtonLayoutScreen::init() {
     showProfileMode = Storage::getInstance().getDisplayOptions().profileMode;
 
     getRenderer()->clearScreen();
+
+    // Add a fixed legend as widgets: lever (stick), buttons 1-6 in 2 rows, and Select/Start
+    // Lever (visual only)
+    addLever(28, 30, 8, 8, 1, 0, 0);
+
+    // Top row: B1, B2, B3
+    addButton(74, 26, 8, 8, 1, 0, GAMEPAD_MASK_B1);
+    addButton(94, 26, 8, 8, 1, 0, GAMEPAD_MASK_B2);
+    addButton(114, 26, 8, 8, 1, 0, GAMEPAD_MASK_B3);
+
+    // Bottom row: B4, L1, R1
+    addButton(74, 46, 8, 8, 1, 0, GAMEPAD_MASK_B4);
+    addButton(94, 46, 8, 8, 1, 0, GAMEPAD_MASK_L1);
+    addButton(114, 46, 8, 8, 1, 0, GAMEPAD_MASK_R1);
+
+    // Select / Start - fixed positions, square shape
+    GPButton* s1 = addButton(10, 48, 26, 54, 1, 0, GAMEPAD_MASK_S1);
+    if (s1) s1->setShape(GP_SHAPE_SQUARE);
+    GPButton* s2 = addButton(30, 48, 46, 54, 1, 0, GAMEPAD_MASK_S2);
+    if (s2) s2->setShape(GP_SHAPE_SQUARE);
 }
 
 void ButtonLayoutScreen::shutdown() {
